@@ -1,0 +1,75 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    background: #000;
+    font-family: Arial, sans-serif;
+}
+
+.background {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    transition: opacity 1s ease;
+}
+
+.player-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+#video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* o contain según preferencia */
+}
+
+.video-title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background: rgba(0,0,0,0.6);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    max-width: 80%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.status-message {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 100;
+    text-align: center;
+    padding: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Orientación vertical (si detectamos 9:16 o similar) */
+@media (orientation: portrait) {
+    #video-player {
+        object-fit: contain; /* mejor para vertical en pantallas portrait */
+    }
+}

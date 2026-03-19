@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rx Video Player</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- No usamos CDN externos para maximizar offline -->
+</head>
+<body>
+
+<!-- Fondo fallback (si no hay videos o error) -->
+<div id="background" class="background"></div>
+
+<!-- Contenedor de video principal -->
+<div id="player-container" class="player-container">
+    <video id="video-player" autoplay muted playsinline loop></video>
+    <!-- Overlay para título (opcional, se puede quitar) -->
+    <div id="video-title" class="video-title"></div>
+</div>
+
+<!-- Mensaje de error/offline (oculto por defecto) -->
+<div id="status-message" class="status-message hidden">
+    <p id="status-text">Cargando contenido...</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
