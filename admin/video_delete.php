@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once 'proteccion.php';
 require_once '../config.php';
 
 $id = (int)($_GET['id'] ?? 0);

@@ -50,5 +50,13 @@ define('ADMIN_PASS_HASH', password_hash('$2y$12$z8/AoWe9I1lrK3uy/HRKueYjOjssHm0v
 // Ejemplo: password_hash('debiansarge1282', PASSWORD_DEFAULT)
 // Guardá el hash generado y pegalo acá (no la contraseña en plano)
 
+// ================= SECCIÓN 7: GOOGLE OAUTH =================
+define('GOOGLE_CLIENT_ID',     '1054188640705-9kss0b3427qkr9aotfkaqnbqsmi1c94o.apps.googleusercontent.com');
+define('GOOGLE_CLIENT_SECRET', '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');
+define('GOOGLE_REDIRECT_URI',  'https://videoplayer.ratax.com.ar/admin/callback.php');
+define('GOOGLE_AUTH_URL',      'https://accounts.google.com/o/oauth2/v2/auth');
+define('GOOGLE_TOKEN_URL',     'https://oauth2.googleapis.com/token');
+define('GOOGLE_USERINFO_URL',  'https://www.googleapis.com/oauth2/v3/userinfo');
+
 
 ?>

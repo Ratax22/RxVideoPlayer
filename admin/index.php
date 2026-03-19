@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once 'proteccion.php';
 require_once '../config.php';
 
 // Proteger: si no está logueado → redirigir a login

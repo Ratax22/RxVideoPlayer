@@ -1,8 +1,8 @@
 <?php
-session_start();
 // ================================================
 // SECCIÓN 1: INCLUDES Y CONFIGURACIÓN
 // ================================================
+require_once 'proteccion.php';
 require_once '../config.php';
 
 // ================================================

@@ -1,8 +1,8 @@
 <?php
-session_start();
 // ================================================
 // admin/video_edit.php - Rotar y previsualizar
 // ================================================
+require_once 'proteccion.php';
 require_once '../config.php';
 
 $id = (int)($_GET['id'] ?? 0);

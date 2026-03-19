@@ -1,8 +1,9 @@
 <?php
-session_start();
+
 // ================================================
 // admin/video_upload.php - Procesa subida y optimización
 // ================================================
+require_once 'proteccion.php';
 require_once '../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['video']) || $_FILES['video']['error'] !== 0) {

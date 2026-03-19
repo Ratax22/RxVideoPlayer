@@ -1,8 +1,8 @@
 <?php
-session_start();
 // ================================================
 // admin/videos.php - Listado y subida de videos
 // ================================================
+require_once 'proteccion.php';
 require_once '../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video'])) {
