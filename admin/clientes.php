@@ -2,6 +2,43 @@
 require_once 'proteccion.php';
 require_once '../config.php';
 
+// Filtrar clientes según rol y permisos
+$sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
+
+if ($_SESSION['rol'] === 'dueño') {
+    // Dueño ve todo (o solo de sus empresas - según necesites)
+    $clientes = $pdo->query("SELECT * FROM clients ORDER BY name ASC")->fetchAll();
+} else {
+    // Supervisor y empleado solo ven clientes de sus sucursales
+    if (empty($sucursales_ids)) {
+        $clientes = [];
+    } else {
+        $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
+        $stmt = $pdo->prepare("
+            SELECT c.* 
+            FROM clients c
+            INNER JOIN client_sucursal cs ON c.id = cs.client_id   -- asumiendo que agregarás esta tabla
+            WHERE cs.sucursal_id IN ($placeholders)
+            ORDER BY c.name ASC
+        ");
+        $stmt->execute($sucursales_ids);
+        $clientes = $stmt->fetchAll();
+    }
+}
+
+// Procesar eliminación
+if (isset($_GET['delete'])) {
+    $id = (int)$_GET['delete'];
+    try {
+        $pdo->prepare("DELETE FROM clients WHERE id = ?")->execute([$id]);
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Cliente eliminado correctamente'];
+    } catch (Exception $e) {
+        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Error al eliminar: ' . $e->getMessage()];
+    }
+    header("Location: clients.php");
+    exit;
+}
+
 // Función para estado del cliente
 function getClientStatus($last_ping) {
     if (!$last_ping) return ['text' => 'Nunca', 'badge' => 'secondary'];
@@ -86,6 +123,9 @@ $status = getClientStatus($row['last_ping']);
 <a href="?force_refresh=<?= $row['id'] ?>"
 onclick="return confirm('Forzar actualización completa?')"
 class="btn btn-sm btn-outline-info">Refresh</a>
+<a href="?delete=<?= $row['id'] ?>" 
+   onclick="return confirm('¿Eliminar cliente? También se quitarán sus asignaciones de videos.')"
+   class="btn btn-sm btn-outline-danger">Eliminar</a>
 </td>
 </tr>
 <?php endforeach; ?>

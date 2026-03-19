@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 19, 2026 at 09:16 PM
+-- Generation Time: Mar 20, 2026 at 01:09 AM
 -- Server version: 10.11.10-MariaDB-log
 -- PHP Version: 7.4.33
 
@@ -88,6 +88,17 @@ CREATE TABLE `usuarios` (
   `empresa_id` int(11) DEFAULT NULL,
   `activo` tinyint(1) DEFAULT 1,
   `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuario_empresa`
+--
+
+CREATE TABLE `usuario_empresa` (
+  `usuario_id` int(11) NOT NULL,
+  `empresa_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -188,6 +199,13 @@ ALTER TABLE `usuarios`
   ADD KEY `empresa_id` (`empresa_id`);
 
 --
+-- Indexes for table `usuario_empresa`
+--
+ALTER TABLE `usuario_empresa`
+  ADD PRIMARY KEY (`usuario_id`,`empresa_id`),
+  ADD KEY `empresa_id` (`empresa_id`);
+
+--
 -- Indexes for table `usuario_sucursal`
 --
 ALTER TABLE `usuario_sucursal`
@@ -271,6 +289,13 @@ ALTER TABLE `sucursales`
 --
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `usuario_empresa`
+--
+ALTER TABLE `usuario_empresa`
+  ADD CONSTRAINT `usuario_empresa_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `usuario_empresa_ibfk_2` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `usuario_sucursal`
