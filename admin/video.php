@@ -1,82 +1,82 @@
 <?php
-// ================================================
-// admin/videos.php - Listado y subida de videos
-// ================================================
-
 session_start();
-require_once '../config.php';       // conexión + constantes
-require_once 'proteccion.php';      // chequeo de sesión y rol
+require_once '../config.php';
+require_once 'proteccion.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video'])) {
-    // Procesar subida → se mueve a video_upload.php o inline, pero por claridad lo separamos después
-    // Por ahora solo mostramos el form
+// Sucursales que puede ver el usuario actual
+$sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
+
+// Videos disponibles para este usuario
+if ($_SESSION['rol'] === 'admin') {
+    $stmt = $pdo->query("SELECT * FROM videos ORDER BY upload_date DESC");
+} else {
+    if (empty($sucursales_ids)) {
+        $videos = [];
+    } else {
+        $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
+        $stmt = $pdo->prepare("
+            SELECT DISTINCT v.* 
+            FROM videos v
+            INNER JOIN video_sucursal vs ON v.id = vs.video_id
+            WHERE vs.sucursal_id IN ($placeholders)
+            ORDER BY v.upload_date DESC
+        ");
+        $stmt->execute($sucursales_ids);
+    }
 }
+$videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// ================= SECCIÓN: Listado de videos =================
-$stmt = $pdo->query("SELECT * FROM videos ORDER BY upload_date DESC");
-$videos = $stmt->fetchAll();
+// Flash de videos nuevos (últimos 7 días)
+$flash_nuevos = false;
+foreach ($videos as $v) {
+    if (strtotime($v['upload_date']) > strtotime('-7 days')) {
+        $flash_nuevos = true;
+        break;
+    }
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Admin - Videos | videoplayer.ratax.com.ar</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
-h1 { color: #333; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-th { background: #007bff; color: white; }
-img.thumb { max-width: 160px; border-radius: 4px; }
-.form-upload { background: white; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 30px; }
-button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-</style>
+    <meta charset="UTF-8">
+    <title>Videos - Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
-<h1>Gestión de Videos</h1>
+<div class="container py-4">
+    <h1>Videos Disponibles</h1>
 
-<div class="form-upload">
-<h2>Subir nuevo video</h2>
-<form action="video_upload.php" method="post" enctype="multipart/form-data">
-<label>Título del video:</label><br>
-<input type="text" name="title" required style="width:100%; padding:8px; margin:8px 0;"><br><br>
+    <?php if ($flash_nuevos): ?>
+    <div class="alert alert-info alert-dismissible fade show">
+        <strong>¡Nuevos videos disponibles!</strong> Revisa la lista, hay contenido reciente que puedes usar en tus playlists.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php endif; ?>
 
-<input type="file" name="video" accept="video/*" required><br><br>
-<button type="submit">Subir, optimizar y guardar</button>
-</form>
+    <a href="video_upload.php" class="btn btn-primary mb-3">+ Subir nuevo video</a>
+
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Título</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($videos as $v): ?>
+            <tr>
+                <td><?= htmlspecialchars($v['title']) ?></td>
+                <td><?= date('d/m/Y H:i', strtotime($v['upload_date'])) ?></td>
+                <td>
+                    <a href="video_edit.php?id=<?= $v['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="video_delete.php?id=<?= $v['id'] ?>" onclick="return confirm('¿Eliminar video?')" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
-
-<h2>Videos cargados (<?= count($videos) ?>)</h2>
-
-<?php if (empty($videos)): ?>
-<p>No hay videos aún.</p>
-<?php else: ?>
-<table>
-<tr>
-<th>Miniatura</th>
-<th>Título</th>
-<th>Fecha de carga</th>
-<th>Archivo</th>
-<th>Acciones</th>
-</tr>
-<?php foreach ($videos as $v): ?>
-<tr>
-<td><img src="../images/thumbs/<?= htmlspecialchars($v['thumbnail']) ?>" class="thumb" alt="thumb"></td>
-<td><?= htmlspecialchars($v['title']) ?></td>
-<td><?= date('d/m/Y H:i', strtotime($v['upload_date'])) ?></td>
-<td><?= htmlspecialchars($v['filename']) ?></td>
-<td>
-<a href="video_edit.php?id=<?= $v['id'] ?>">Editar / Rotar</a> |
-<a href="video_delete.php?id=<?= $v['id'] ?>" onclick="return confirm('¿Eliminar este video definitivamente?');">Eliminar</a>
-</td>
-</tr>
-<?php endforeach; ?>
-</table>
-<?php endif; ?>
-
-<p><a href="index.php">← Volver al menú principal</a></p>
-
 </body>
 </html>
