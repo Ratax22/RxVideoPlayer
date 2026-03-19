@@ -76,24 +76,14 @@ unset($_SESSION['flash']);
         <div class="col-md-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Asignaciones</h5>
-                    <p class="card-text">Armar playlists por cliente (próximamente estadísticas)</p>
-                    <a href="clientes.php" class="btn btn-primary">Ver Clientes y Asignar</a>
+                    <h5 class="card-title">Usuarios</h5>
+                    <p class="card-text">Gestion de usuarios y sucursales</p>
+                    <a href="usuarios.php" class="btn btn-primary">Administrar Usuarios</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <h5 class="card-title">Asignaciones</h5>
-                    <p class="card-text">Armar playlists por cliente (próximamente estadísticas)</p>
-                    <a href="usuarios.php" class="btn btn-lg btn-outline-primary">Administrar Usuarios</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
