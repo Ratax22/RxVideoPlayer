@@ -23,18 +23,19 @@ $errors = [];
 $empresa = [
     'id'       => 0,
     'nombre'   => '',
+    'cuit'     => '',
     'activo'   => 1,
-    'creado_por' => $_SESSION['usuario_id']  // por defecto el usuario actual
+    'creado_por' => $_SESSION['usuario_id']
 ];
 
-// ID de la empresa a editar
+// ID de la empresa
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // ================================================
 // SECCIÓN 4: CARGAR DATOS SI ES EDICIÓN + CHEQUEO PERMISO
 // ================================================
 if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT id, nombre, activo, creado_por FROM empresas WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, nombre, cuit, activo, creado_por FROM empresas WHERE id = ?");
     $stmt->execute([$id]);
     $empresa = $stmt->fetch(PDO::FETCH_ASSOC) ?: $empresa;
 
@@ -44,7 +45,7 @@ if ($id > 0) {
         exit;
     }
 
-    // Chequear permiso: admin o dueño de esta empresa
+    // Chequear permiso
     $empresas_permitidas = getEmpresasAcceso($pdo, $_SESSION['usuario_id'], $rol);
     if ($rol !== 'admin' && !in_array($id, $empresas_permitidas)) {
         $_SESSION['flash'] = ['type' => 'danger', 'message' => 'No tienes permiso para editar esta empresa.'];
@@ -54,15 +55,14 @@ if ($id > 0) {
 }
 
 // ================================================
-// SECCIÓN 5: LISTADO DE USUARIOS QUE PUEDEN SER DUEÑOS (para nuevo)
+// SECCIÓN 5: LISTADO DE POSIBLES DUEÑOS (solo al crear nuevo)
 // ================================================
 $posibles_duenos = [];
-if ($id === 0) {  // solo al crear nuevo
+if ($id === 0) {
     if ($rol === 'admin') {
         $stmt = $pdo->query("SELECT id, nombre, email FROM usuarios WHERE rol = 'dueño' AND activo = 1 ORDER BY nombre");
         $posibles_duenos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } else {
-        // Dueño solo puede crear empresas para sí mismo
         $posibles_duenos = [['id' => $_SESSION['usuario_id'], 'nombre' => $_SESSION['nombre'], 'email' => $_SESSION['email']]];
     }
 }
@@ -71,9 +71,10 @@ if ($id === 0) {  // solo al crear nuevo
 // SECCIÓN 6: PROCESAR FORMULARIO (POST)
 // ================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id       = (int)($_POST['id'] ?? 0);
-    $nombre   = trim($_POST['nombre'] ?? '');
-    $activo   = isset($_POST['activo']) ? 1 : 0;
+    $id         = (int)($_POST['id'] ?? 0);
+    $nombre     = trim($_POST['nombre'] ?? '');
+    $cuit       = trim($_POST['cuit'] ?? '');
+    $activo     = isset($_POST['activo']) ? 1 : 0;
     $creado_por = (int)($_POST['creado_por'] ?? $_SESSION['usuario_id']);
 
     // Validaciones
@@ -81,16 +82,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "El nombre de la empresa es obligatorio.";
     }
 
-    // Unicidad de nombre (opcional, pero útil)
+    // Validación básica de CUIT (opcional pero recomendado)
+    if (!empty($cuit)) {
+        $cuit_limpio = preg_replace('/[^0-9]/', '', $cuit); // quita guiones/espacios
+        if (strlen($cuit_limpio) !== 11 || !ctype_digit($cuit_limpio)) {
+            $errors[] = "CUIT inválido (debe tener exactamente 11 dígitos numéricos).";
+        }
+    }
+
+    // Unicidad de nombre
     $stmt = $pdo->prepare("SELECT id FROM empresas WHERE nombre = ? AND id != ?");
     $stmt->execute([$nombre, $id]);
     if ($stmt->fetch()) {
         $errors[] = "Ya existe una empresa con ese nombre.";
     }
 
-    // Validar que el dueño seleccionado sea válido según rol
+    // Validar dueño
     if ($id === 0 && $rol !== 'admin') {
-        $creado_por = $_SESSION['usuario_id'];  // Dueño solo puede crearse a sí mismo
+        $creado_por = $_SESSION['usuario_id'];
     }
 
     if (empty($errors)) {
@@ -98,21 +107,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($id > 0) {
                 // UPDATE
                 $stmt = $pdo->prepare("
-                    UPDATE empresas SET nombre = ?, activo = ? 
+                    UPDATE empresas SET nombre = ?, cuit = ?, activo = ? 
                     WHERE id = ?
                 ");
-                $stmt->execute([$nombre, $activo, $id]);
+                $stmt->execute([$nombre, $cuit, $activo, $id]);
             } else {
                 // INSERT
                 $stmt = $pdo->prepare("
-                    INSERT INTO empresas (nombre, activo, creado_por) 
-                    VALUES (?, ?, ?)
+                    INSERT INTO empresas (nombre, cuit, activo, creado_por) 
+                    VALUES (?, ?, ?, ?)
                 ");
-                $stmt->execute([$nombre, $activo, $creado_por]);
+                $stmt->execute([$nombre, $cuit, $activo, $creado_por]);
 
                 $id = $pdo->lastInsertId();
 
-                // Asignar automáticamente al dueño creador
+                // Asignar al dueño
                 $pdo->prepare("
                     INSERT IGNORE INTO usuario_empresa (usuario_id, empresa_id) 
                     VALUES (?, ?)
@@ -160,6 +169,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($empresa['nombre']) ?>" required autofocus>
         </div>
 
+        <div class="mb-3">
+            <label class="form-label fw-bold">CUIT (opcional)</label>
+            <input type="text" name="cuit" class="form-control" 
+                   value="<?= htmlspecialchars($empresa['cuit'] ?? '') ?>" 
+                   placeholder="Ej: 30-12345678-9" maxlength="20">
+            <div class="form-text">Formato: 11 dígitos numéricos (guiones opcionales)</div>
+        </div>
+
         <?php if ($id === 0 && $rol === 'admin'): ?>
         <div class="mb-3">
             <label class="form-label fw-bold">Dueño inicial</label>
@@ -170,7 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div class="form-text">El dueño podrá administrar esta empresa y crear sucursales.</div>
         </div>
         <?php else: ?>
             <input type="hidden" name="creado_por" value="<?= $_SESSION['usuario_id'] ?>">
