@@ -1,6 +1,8 @@
 <?php
-require_once 'proteccion.php';
-require_once '../config.php';
+
+session_start();
+require_once '../config.php';       // conexión + constantes
+require_once 'proteccion.php';      // chequeo de sesión y rol
 
 // Proteger: si no está logueado → redirigir a login
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {

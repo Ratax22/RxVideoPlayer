@@ -1,6 +1,8 @@
 <?php
-require_once 'proteccion.php';
-require_once '../config.php';
+
+session_start();
+require_once '../config.php';       // conexión + constantes
+require_once 'proteccion.php';      // chequeo de sesión y rol
 
 $errors = [];
 $flash = null;  // Para mensajes de éxito o error en la misma página

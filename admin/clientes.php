@@ -1,6 +1,8 @@
 <?php
-require_once 'proteccion.php';
-require_once '../config.php';
+
+session_start();
+require_once '../config.php';       // conexión + constantes
+require_once 'proteccion.php';      // chequeo de sesión y rol
 
 // Filtrar clientes según rol y permisos
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);

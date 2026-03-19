@@ -2,8 +2,10 @@
 // ================================================
 // admin/videos.php - Listado y subida de videos
 // ================================================
-require_once 'proteccion.php';
-require_once '../config.php';
+
+session_start();
+require_once '../config.php';       // conexión + constantes
+require_once 'proteccion.php';      // chequeo de sesión y rol
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video'])) {
     // Procesar subida → se mueve a video_upload.php o inline, pero por claridad lo separamos después

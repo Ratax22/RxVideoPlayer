@@ -2,8 +2,10 @@
 // ================================================
 // admin/video_edit.php - Rotar y previsualizar
 // ================================================
-require_once 'proteccion.php';
-require_once '../config.php';
+
+session_start();
+require_once '../config.php';       // conexión + constantes
+require_once 'proteccion.php';      // chequeo de sesión y rol
 
 $id = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare("SELECT * FROM videos WHERE id = ?");

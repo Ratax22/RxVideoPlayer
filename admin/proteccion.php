@@ -2,6 +2,10 @@
 // admin/proteccion.php
 // Protección centralizada - incluir al inicio de TODOS los archivos admin
 
+if (!isset($pdo)) {
+    require_once '../config.php';
+}
+
 session_start();
 
 $current_page = basename($_SERVER['PHP_SELF']);

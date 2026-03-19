@@ -2,9 +2,10 @@
 // ================================================
 // SECCIÓN 1: INCLUDES Y PROTECCIÓN
 // ================================================
+
 session_start();
-require_once '../config.php';
-require_once 'proteccion.php';  // ← tu bloque de protección
+require_once '../config.php';       // conexión + constantes
+require_once 'proteccion.php';      // chequeo de sesión y rol
 
 // ================================================
 // SECCIÓN 2: VARIABLES INICIALES
