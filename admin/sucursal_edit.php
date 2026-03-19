@@ -24,6 +24,7 @@ $sucursal = [
     'id'          => 0,
     'empresa_id'  => 0,
     'nombre'      => '',
+    'direccion'   => '',
     'activo'      => 1
 ];
 
@@ -34,7 +35,7 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 // SECCIÓN 4: CARGAR DATOS SI ES EDICIÓN + CHEQUEO PERMISO
 // ================================================
 if ($id > 0) {
-    $stmt = $pdo->prepare("SELECT id, empresa_id, nombre, activo FROM sucursales WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, empresa_id, nombre, direccion, activo FROM sucursales WHERE id = ?");
     $stmt->execute([$id]);
     $sucursal = $stmt->fetch(PDO::FETCH_ASSOC) ?: $sucursal;
 
@@ -76,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id          = (int)($_POST['id'] ?? 0);
     $empresa_id  = (int)($_POST['empresa_id'] ?? 0);
     $nombre      = trim($_POST['nombre'] ?? '');
+    $direccion   = trim($_POST['direccion'] ?? '');
     $activo      = isset($_POST['activo']) ? 1 : 0;
 
     // Validaciones
@@ -92,11 +94,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "No tienes permiso para asignar esta empresa.";
     }
 
-    // Unicidad de nombre dentro de la empresa (opcional pero útil)
+    // Unicidad de nombre dentro de la empresa
     $stmt = $pdo->prepare("SELECT id FROM sucursales WHERE nombre = ? AND empresa_id = ? AND id != ?");
     $stmt->execute([$nombre, $empresa_id, $id]);
     if ($stmt->fetch()) {
         $errors[] = "Ya existe una sucursal con ese nombre en esta empresa.";
+    }
+
+    // Validación ligera de dirección (opcional)
+    if (strlen($direccion) > 255) {
+        $errors[] = "La dirección es demasiado larga (máx 255 caracteres).";
     }
 
     if (empty($errors)) {
@@ -104,17 +111,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($id > 0) {
                 // UPDATE
                 $stmt = $pdo->prepare("
-                    UPDATE sucursales SET empresa_id = ?, nombre = ?, activo = ? 
+                    UPDATE sucursales SET empresa_id = ?, nombre = ?, direccion = ?, activo = ? 
                     WHERE id = ?
                 ");
-                $stmt->execute([$empresa_id, $nombre, $activo, $id]);
+                $stmt->execute([$empresa_id, $nombre, $direccion, $activo, $id]);
             } else {
                 // INSERT
                 $stmt = $pdo->prepare("
-                    INSERT INTO sucursales (empresa_id, nombre, activo) 
-                    VALUES (?, ?, ?)
+                    INSERT INTO sucursales (empresa_id, nombre, direccion, activo) 
+                    VALUES (?, ?, ?, ?)
                 ");
-                $stmt->execute([$empresa_id, $nombre, $activo]);
+                $stmt->execute([$empresa_id, $nombre, $direccion, $activo]);
             }
 
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Sucursal guardada correctamente'];
@@ -136,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-light">
 
-<div class="container py-5" style="max-width: 600px;">
+<div class="container py-5" style="max-width: 700px;">
 
     <h2 class="mb-4"><?= $id ? 'Editar Sucursal' : 'Crear Nueva Sucursal' ?></h2>
 
@@ -168,6 +175,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label class="form-label fw-bold">Nombre de la sucursal</label>
             <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($sucursal['nombre']) ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Dirección (opcional)</label>
+            <input type="text" name="direccion" class="form-control" 
+                   value="<?= htmlspecialchars($sucursal['direccion'] ?? '') ?>" 
+                   placeholder="Ej: Av. Córdoba 1234, CABA" maxlength="255">
         </div>
 
         <div class="mb-4 form-check">
