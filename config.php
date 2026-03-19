@@ -6,8 +6,8 @@
 // ================= SECCIÓN 1: CONEXIÓN BASE DE DATOS =================
 $host = 'localhost';
 $db   = 'rx_video_player';
-$user = 'Rx_Video_Player';           // ← cámbialo si usás password
-$pass = 'debiansarge1282';
+$user = 'Rx_Video_Player';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
@@ -45,18 +45,17 @@ define('POLL_INTERVAL', 30);    // segundos que el cliente consulta si hay actua
 // ================= FIN CONFIG =================
 
 // ================= SECCIÓN 6: SEGURIDAD ADMIN =================
-define('ADMIN_USER',     'ratax');                  // Cambialo a lo que quieras
+define('ADMIN_USER',     'user');                  // Cambialo a lo que quieras
 define('ADMIN_PASS_HASH', password_hash('$2y$12$z8/AoWe9I1lrK3uy/HRKueYjOjssHm0vFgxvojuG5AfxAsBSHDtMa', PASSWORD_DEFAULT));
-// Ejemplo: password_hash('debiansarge1282', PASSWORD_DEFAULT)
+// Ejemplo: password_hash('12345678', PASSWORD_DEFAULT)
 // Guardá el hash generado y pegalo acá (no la contraseña en plano)
 
 // ================= SECCIÓN 7: GOOGLE OAUTH =================
-define('GOOGLE_CLIENT_ID',     '1054188640705-9kss0b3427qkr9aotfkaqnbqsmi1c94o.apps.googleusercontent.com');
-define('GOOGLE_CLIENT_SECRET', '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');
+define('GOOGLE_CLIENT_ID',     '');
+define('GOOGLE_CLIENT_SECRET', '');
 define('GOOGLE_REDIRECT_URI',  'https://videoplayer.ratax.com.ar/admin/callback.php');
 define('GOOGLE_AUTH_URL',      'https://accounts.google.com/o/oauth2/v2/auth');
 define('GOOGLE_TOKEN_URL',     'https://oauth2.googleapis.com/token');
 define('GOOGLE_USERINFO_URL',  'https://www.googleapis.com/oauth2/v3/userinfo');
-
 
 ?>
