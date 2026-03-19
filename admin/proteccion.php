@@ -4,6 +4,12 @@
 
 session_start();
 
+$current_page = basename($_SERVER['PHP_SELF']);
+if ($current_page === 'login.php' || $current_page === 'callback.php') {
+    // No aplicar protección en login ni callback
+    return;
+}
+
 if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['rol'])) {
     header("Location: login.php");
     exit;
