@@ -2,6 +2,9 @@
 session_start();
 require_once '../config.php';
 
+var_dump($_SESSION);  // muestra qué tiene la sesión
+die('Debug sesión en login.php');
+
 if (isset($_SESSION['usuario_id'])) {
     //header("Location: index.php");
     echo "Usurio esta definido";
