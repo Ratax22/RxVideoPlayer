@@ -5,11 +5,11 @@ require_once '../config.php';       // conexión + constantes
 require_once 'proteccion.php';      // chequeo de sesión y rol
 
 // Proteger: si no está logueado → redirigir a login
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+//if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     //header("Location: login.php");
     //exit;
-    echo "error";
-}
+//    echo "error";
+//}
 
 // Mensaje flash si viene de alguna acción
 $flash = $_SESSION['flash'] ?? null;
@@ -84,6 +84,16 @@ unset($_SESSION['flash']);
         </div>
     </div>
 
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Asignaciones</h5>
+                    <p class="card-text">Armar playlists por cliente (próximamente estadísticas)</p>
+                    <a href="usuarios.php" class="btn btn-lg btn-outline-primary">Administrar Usuarios</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
