@@ -5,7 +5,11 @@ require_once '../config.php';
 // Filtrar clientes según rol y permisos
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 
-if ($_SESSION['rol'] === 'dueño') {
+if ($_SESSION['rol'] === 'admin') {
+    // Admin ve TODO
+    $stmt = $pdo->query("SELECT * FROM clients ORDER BY name ASC");
+}
+elseif ($_SESSION['rol'] === 'dueño') {
     // Dueño ve todo (o solo de sus empresas - según necesites)
     $clientes = $pdo->query("SELECT * FROM clients ORDER BY name ASC")->fetchAll();
 } else {

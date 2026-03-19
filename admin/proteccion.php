@@ -5,14 +5,14 @@
 session_start();
 
 if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['rol'])) {
-    header("Location: login.php");   // o login_oauth.php según preferencia
+    header("Location: login.php");
     exit;
 }
 
 $user_id = (int)$_SESSION['usuario_id'];
 $rol     = $_SESSION['rol'];
 
-// Verificar que el usuario siga activo
+// Verificar que siga activo
 $stmt = $pdo->prepare("SELECT activo FROM usuarios WHERE id = ?");
 $stmt->execute([$user_id]);
 if (!$stmt->fetchColumn()) {
@@ -21,10 +21,16 @@ if (!$stmt->fetchColumn()) {
     exit;
 }
 
-// Función auxiliar: obtener sucursales accesibles por el usuario actual
+// Función auxiliar: sucursales accesibles
 function getSucursalesAcceso($pdo, $user_id, $rol) {
+    if ($rol === 'admin') {
+        // Admin ve TODAS las sucursales
+        $stmt = $pdo->query("SELECT id FROM sucursales WHERE activo = 1");
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     if ($rol === 'dueño') {
-        // Dueño ve todas las sucursales de sus empresas
+        // Dueño ve sucursales de sus empresas
         $stmt = $pdo->prepare("
             SELECT s.id 
             FROM sucursales s
@@ -32,11 +38,24 @@ function getSucursalesAcceso($pdo, $user_id, $rol) {
             WHERE ue.usuario_id = ?
         ");
         $stmt->execute([$user_id]);
-    } else {
-        // Supervisor y empleado ven solo las sucursales asignadas directamente
-        $stmt = $pdo->prepare("SELECT sucursal_id FROM usuario_sucursal WHERE usuario_id = ?");
-        $stmt->execute([$user_id]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    // Supervisor y empleado: solo las asignadas directamente
+    $stmt = $pdo->prepare("SELECT sucursal_id FROM usuario_sucursal WHERE usuario_id = ?");
+    $stmt->execute([$user_id]);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+// Función auxiliar: empresas accesibles (para dueños y admin)
+function getEmpresasAcceso($pdo, $user_id, $rol) {
+    if ($rol === 'admin') {
+        $stmt = $pdo->query("SELECT id FROM empresas WHERE activo = 1");
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    $stmt = $pdo->prepare("SELECT empresa_id FROM usuario_empresa WHERE usuario_id = ?");
+    $stmt->execute([$user_id]);
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 ?>
