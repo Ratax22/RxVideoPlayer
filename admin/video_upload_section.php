@@ -34,6 +34,10 @@ if (empty($sucursales)) {
     $errors[] = "No tienes sucursales asignadas para subir videos.";
 }
 
+console_log($sucursales, 'Sucursales disponibles para este usuario');
+console_log($sucursales_ids, 'IDs de sucursales devueltos por getSucursalesAcceso');
+console_log($_POST, 'Datos POST recibidos');
+
 // Procesar subida
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
     $title       = trim($_POST['title'] ?? '');
@@ -93,8 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
                     $stmt->execute([$title, $filename, $thumb_name]);
                     $video_id = $pdo->lastInsertId();
 
-                    echo "Ultimo" .$video_id;
-
                     // Asignar sucursales (solo válidas)
                     $sucursales_validas = array_intersect($sucursales_post, $sucursales_ids);
                     if (!empty($sucursales_validas)) {
@@ -103,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
                             $stmt->execute([$video_id, (int)$suc_id]);
                         }
                     }
-                    echo "Path: ".$upload_path;
                     unlink($upload_path);
                     $pdo->commit();
 

@@ -59,4 +59,26 @@ define('GOOGLE_AUTH_URL',      'https://accounts.google.com/o/oauth2/v2/auth');
 define('GOOGLE_TOKEN_URL',     'https://oauth2.googleapis.com/token');
 define('GOOGLE_USERINFO_URL',  'https://www.googleapis.com/oauth2/v3/userinfo');
 
+// ================= SECCIÓN 8: DEBUG =================
+function console_log($data, $label = '', $backtrace = false) {
+    $timestamp = date('H:i:s');
+    $label = $label ? "[$timestamp] $label: " : "[$timestamp] ";
+    
+    if (is_array($data) || is_object($data)) {
+        $data = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    } else {
+        $data = json_encode($data);
+    }
+    
+    echo "<script>console.log('%cPHP Debug → $label' + " . $data . ", 'color: #00ff00; font-weight: bold;');</script>";
+    
+    if ($backtrace) {
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $caller = $bt[1] ?? $bt[0];
+        $file = basename($caller['file'] ?? 'desconocido');
+        $line = $caller['line'] ?? '?';
+        echo "<script>console.log('%c   → llamado desde: $file:$line', 'color: #888; font-style: italic;');</script>";
+    }
+}
+
 ?>
