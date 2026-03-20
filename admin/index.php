@@ -19,7 +19,7 @@ $menu_items = [
     'usuarios'   => ['label' => 'Usuarios',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
     'usuario_edit'   => ['label' => 'Usuarios Editar',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
     'empresas'   => ['label' => 'Empresas',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
-    'empresa_editar'   => ['label' => 'Empresas Editar',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
+    'empresa_edit'   => ['label' => 'Empresas Editar',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
     'sucursales' => ['label' => 'Sucursales',    'icon' => 'bi-shop',           'roles' => ['admin','dueño']],
     'sucursal_edit' => ['label' => 'Sucursales Editar',    'icon' => 'bi-shop',           'roles' => ['admin','dueño']],
 ];
