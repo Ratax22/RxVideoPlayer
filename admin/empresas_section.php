@@ -9,7 +9,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Listado de empresas</h5>
-    <a href="?action=empresa_nueva" class="btn btn-primary btn-sm">+ Nueva Empresa</a>
+    <a href="?action=empresa_edit" class="btn btn-primary btn-sm">+ Nueva Empresa</a>
 </div>
 
 <div class="table-responsive">
