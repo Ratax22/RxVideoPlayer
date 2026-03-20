@@ -90,7 +90,7 @@ if (isset($_SESSION['flash'])) {
                     <?php if ($_SESSION['rol'] !== 'empleado'): ?>
                         <a href="?action=cliente_edit&id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-warning">Editar</a>
                     <?php endif; ?>
-                    <a href="?action=assign_playlist&client_id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary">Playlist</a>
+                    <a href="?action=assign&client_id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary">Playlist</a>
                     <?php if ($_SESSION['rol'] === 'admin' || $_SESSION['rol'] === 'dueño'): ?>
                         <a href="?action=cliente_delete&id=<?= $row['id'] ?>" 
                            onclick="return confirm('¿Eliminar cliente?')"
