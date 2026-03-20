@@ -325,27 +325,1275 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
 <?php endif; ?>
 
 <!-- Chart.js -->
+<!-- Chart.js - Torta estados -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctxEstados = document.getElementById('estadosChart');
-    if (ctxEstados) {
-        new Chart(ctxEstados.getContext('2d'), {
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
             type: 'doughnut',
             data: {
                 labels: ['Activos', 'Inactivos', 'Offline'],
                 datasets: [{
-                    data: [<?= $clientes_activos ?? 0 ?>, <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>, <?= $clientes_offline ?? 0 ?>],
+                    data: [activos, inactivos, offline],
                     backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderColor: '#fff'
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'Estados actuales' }
-                }
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
             }
         });
-    }
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>);
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script> ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>, <?= $clientes_offline ?? 0 ?>],
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>#dc3545'],
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>tuales' }
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+<!-- Chart.js - Torta estados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('estadosChart');
+        if (!canvas) {
+            console.error('Canvas #estadosChart no encontrado en el DOM');
+            return;
+        }
+
+        const activos = <?= $clientes_activos ?? 0 ?>;
+        const inactivos = <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>;
+        const offline = <?= $clientes_offline ?? 0 ?>;
+
+        console.log('Datos para torta:', { activos, inactivos, offline });
+
+        if (activos + inactivos + offline === 0) {
+            console.warn('No hay datos para mostrar en la torta (todos en 0)');
+            canvas.parentElement.innerHTML = '<p class="text-muted text-center py-4">No hay datos de dispositivos disponibles.</p>';
+            return;
+        }
+
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [activos, inactivos, offline],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#333', font: { size: 14 } }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Estados actuales de dispositivos',
+                        color: '#333',
+                        font: { size: 16 }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    });
 </script>
