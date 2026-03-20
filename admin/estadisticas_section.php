@@ -1,18 +1,13 @@
 <?php
 // ================================================
-// estadisticas_section.php
-// Estadísticas + export CSV puro
+// estadisticas_section.php - Estadísticas detalladas + export CSV puro
 // ================================================
 
-// Iniciar buffer para limpiar cualquier salida accidental
-ob_start();
-
-// Exportar CSV (primero, antes de cualquier HTML)
+// Bloque de export CSV - se ejecuta primero y corta todo
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
-    // Limpiar buffer
-    ob_end_clean();
+    ob_start(); // Buffer para limpiar salida accidental
+    ob_end_clean(); // Limpiar cualquier cosa que se haya impreso antes
 
-    // Headers estrictos para CSV
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="estadisticas_' . date('Y-m-d_H-i-s') . '.csv"');
     header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -21,30 +16,25 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
 
     $output = fopen('php://output', 'w');
 
-    // BOM para que Excel reconozca UTF-8 correctamente (opcional pero recomendado)
+    // BOM para Excel (caracteres especiales)
     echo "\xEF\xBB\xBF";
 
-    // Cabeceras CSV
     fputcsv($output, ['Métrica', 'Valor']);
-
-    // Métricas (ajustá según tus variables reales)
     fputcsv($output, ['Total reproducciones', $total_reproducciones ?? 0]);
     fputcsv($output, ['Videos accesibles', $total_videos ?? 0]);
     fputcsv($output, ['Videos nuevos (7 días)', $videos_nuevos ?? 0]);
     fputcsv($output, []);
     fputcsv($output, ['Top Videos', 'Reproducciones']);
 
-    // Top videos
     foreach ($top_videos ?? [] as $v) {
         fputcsv($output, [$v['title'], $v['reproducciones']]);
     }
 
     fclose($output);
-    exit; // ¡Corta todo inmediatamente!
+    exit; // ¡Corta inmediatamente! No llega al HTML
 }
 
-// Si no es export → limpiar buffer y continuar con HTML
-ob_end_clean();
+// Si no es export → render normal
 ?>
 
 <h1 class="mb-4">Estadísticas</h1>
@@ -91,9 +81,8 @@ ob_end_clean();
     </div>
 </form>
 
-<!-- Resto del contenido: cards, gráficos, toast, alertas... -->
+<!-- Métricas principales -->
 <div class="row g-4">
-    <!-- Tus cards de métricas aquí -->
     <div class="col-md-4">
         <div class="card border-success shadow-sm h-100">
             <div class="card-body">
@@ -102,12 +91,67 @@ ob_end_clean();
             </div>
         </div>
     </div>
-    <!-- ... resto de cards ... -->
+    <div class="col-md-4">
+        <div class="card border-primary shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Videos Accesibles</h5>
+                <h2 class="card-text"><?= number_format($total_videos ?? 0) ?></h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-info shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Dispositivos Activos</h5>
+                <h2 class="card-text"><?= number_format($clientes_activos ?? 0) ?></h2>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Gráficos -->
+<!-- Gráficos y listados -->
 <div class="row g-4 mt-4">
-    <!-- Torta y listado -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Estados de dispositivos</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="estadosChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Top videos más reproducidos</h5>
+            </div>
+            <div class="card-body p-0">
+                <?php if (!empty($top_videos)): ?>
+                <ul class="list-group list-group-flush">
+                    <?php foreach ($top_videos as $index => $v): ?>
+                        <li class="list-group-item <?= $index === 0 ? 'bg-success-subtle fw-bold' : '' ?>">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-dark rounded-pill me-3" style="width:32px;">
+                                        <?= $index + 1 ?>
+                                    </span>
+                                    <?= htmlspecialchars($v['title']) ?>
+                                </div>
+                                <span class="badge bg-success rounded-pill">
+                                    <?= number_format($v['reproducciones']) ?>
+                                </span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php else: ?>
+                <p class="text-muted text-center py-4">Aún no hay reproducciones registradas.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Toast videos nuevos -->
@@ -140,5 +184,25 @@ ob_end_clean();
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Tu código de Chart.js aquí
+    const ctxEstados = document.getElementById('estadosChart');
+    if (ctxEstados) {
+        new Chart(ctxEstados.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Activos', 'Inactivos', 'Offline'],
+                datasets: [{
+                    data: [<?= $clientes_activos ?? 0 ?>, <?= ($total_clientes ?? 0) - ($clientes_activos ?? 0) - ($clientes_offline ?? 0) ?>, <?= $clientes_offline ?? 0 ?>],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Estados actuales' }
+                }
+            }
+        });
+    }
 </script>
