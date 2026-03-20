@@ -11,7 +11,6 @@ if ($id <= 0) {
     exit;
 }
 
-// Chequear permiso
 $sucursales_usuario = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 $stmt = $pdo->prepare("SELECT sucursal_id FROM video_sucursal WHERE video_id = ?");
 $stmt->execute([$id]);
@@ -26,7 +25,6 @@ if (!$tiene_acceso) {
     exit;
 }
 
-// Eliminar
 try {
     $stmt = $pdo->prepare("SELECT filename, thumbnail FROM videos WHERE id = ?");
     $stmt->execute([$id]);

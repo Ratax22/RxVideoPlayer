@@ -8,10 +8,8 @@
 <?php unset($_SESSION['flash']); endif; ?>
 
 <?php
-// Sucursales accesibles
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 
-// Videos según permisos
 $videos = [];
 if ($_SESSION['rol'] === 'admin') {
     $stmt = $pdo->query("SELECT * FROM videos ORDER BY upload_date DESC");
@@ -33,7 +31,6 @@ if ($_SESSION['rol'] === 'admin') {
     }
 }
 
-// Flash de nuevos videos (últimos 7 días)
 $flash_nuevos = false;
 foreach ($videos as $v) {
     if (strtotime($v['upload_date']) > strtotime('-7 days')) {
@@ -70,7 +67,7 @@ foreach ($videos as $v) {
                 <td>
                     <?php if (!empty($v['thumbnail'])): ?>
                         <img src="../images/thumbs/<?= htmlspecialchars($v['thumbnail']) ?>" 
-                             alt="Thumbnail" class="img-thumbnail" style="width:80px; height:45px; object-fit:cover;"
+                             alt="Thumbnail" class="img-thumbnail" style="width:80px; height:45px; object-fit:cover; cursor:pointer;"
                              data-bs-toggle="modal" data-bs-target="#videoModal"
                              onclick="document.getElementById('videoPlayer').src = '../videos/<?= htmlspecialchars($v['filename']) ?>'">
                     <?php else: ?>
@@ -83,7 +80,7 @@ foreach ($videos as $v) {
                     <a href="?action=video_edit&id=<?= $v['id'] ?>" class="btn btn-sm btn-outline-warning">Editar</a>
                     <?php if ($_SESSION['rol'] === 'admin' || $_SESSION['rol'] === 'dueño'): ?>
                         <a href="?action=video_delete&id=<?= $v['id'] ?>" 
-                           onclick="return confirm('¿Eliminar este video? (se borrarán archivos y relaciones)')"
+                           onclick="return confirm('¿Eliminar este video?')"
                            class="btn btn-sm btn-outline-danger">Eliminar</a>
                     <?php endif; ?>
                 </td>
@@ -96,7 +93,7 @@ foreach ($videos as $v) {
     </table>
 </div>
 
-<!-- Modal para reproducir video al clic en thumbnail -->
+<!-- Modal para reproducir video -->
 <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
