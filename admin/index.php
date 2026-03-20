@@ -26,6 +26,7 @@ $internal_actions = [
     'sucursal_edit', 'sucursal_delete',
     'empresa_edit', 'empresa_delete',
     'usuario_edit', 'usuario_delete',
+    'assign',
     // Agregá acá cualquier otra acción oculta que tengas
 ];
 
