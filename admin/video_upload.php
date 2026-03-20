@@ -12,7 +12,7 @@ require_once 'proteccion.php';
 $rol = $_SESSION['rol'];
 if ($rol === 'empleado') {
     $_SESSION['flash'] = ['type' => 'danger', 'message' => 'No tienes permiso para subir videos.'];
-    header("Location: videos.php");
+    header("Location: video.php");
     exit;
 }
 
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
 
                 $pdo->commit();
                 $_SESSION['flash'] = ['type' => 'success', 'message' => 'Video subido, procesado y asignado correctamente.'];
-                header("Location: videos.php");
+                header("Location: video.php");
                 exit;
             }
         } catch (Exception $e) {
@@ -198,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a href="videos.php" class="btn btn-secondary">Cancelar</a>
+            <a href="video.php" class="btn btn-secondary">Cancelar</a>
             <button type="submit" class="btn btn-success px-5">Subir y Procesar</button>
         </div>
     </form>
