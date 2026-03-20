@@ -54,6 +54,25 @@ $clientes_offline = $pdo->query("
     WHERE last_ping < DATE_SUB(NOW(), INTERVAL 1 HOUR) OR last_ping IS NULL
 ")->fetchColumn();
 
+// Videos nuevos (últimos 7 días, filtrado por rol)
+$videos_nuevos = 0;
+if ($_SESSION['rol'] === 'admin') {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM videos WHERE upload_date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+    $stmt->execute();
+    $videos_nuevos = $stmt->fetchColumn();
+} elseif (!empty($sucursales_ids)) {
+    $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
+    $stmt = $pdo->prepare("
+        SELECT COUNT(DISTINCT v.id) 
+        FROM videos v
+        INNER JOIN video_sucursal vs ON v.id = vs.video_id
+        WHERE vs.sucursal_id IN ($placeholders)
+        AND v.upload_date > DATE_SUB(NOW(), INTERVAL 7 DAY)
+    ");
+    $stmt->execute($sucursales_ids);
+    $videos_nuevos = $stmt->fetchColumn();
+}
+
 // Top 5 videos más reproducidos (filtrado)
 $top_videos = [];
 if ($_SESSION['rol'] === 'admin') {
