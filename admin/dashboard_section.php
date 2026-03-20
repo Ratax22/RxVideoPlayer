@@ -162,7 +162,7 @@ if ($_SESSION['rol'] === 'admin') {
 
 <!-- Filtros -->
 <form method="get" class="mb-4">
-    <input type="hidden" name="action" value="estadisticas2">
+    <input type="hidden" name="action" value="dashboard">
     <div class="row g-3">
         <div class="col-md-3">
             <label class="form-label">Desde</label>
