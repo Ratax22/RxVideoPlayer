@@ -34,9 +34,9 @@ if (empty($sucursales)) {
     $errors[] = "No tienes sucursales asignadas para subir videos.";
 }
 
-console_log($sucursales, 'Sucursales disponibles para este usuario');
-console_log($sucursales_ids, 'IDs de sucursales devueltos por getSucursalesAcceso');
-console_log($_POST, 'Datos POST recibidos');
+//console_log($sucursales, 'Sucursales disponibles para este usuario');
+//console_log($sucursales_ids, 'IDs de sucursales devueltos por getSucursalesAcceso');
+//console_log($_POST, 'Datos POST recibidos');
 
 // Procesar subida
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
                     $pdo->commit();
 
                     $_SESSION['flash'] = ['type' => 'success', 'message' => 'Video subido y procesado correctamente.'];
-                    //header("Location: ?action=videos");
+                    header("Location: ?action=videos");
                     exit;
                 } catch (PDOException $e) {
                     $pdo->rollBack();
