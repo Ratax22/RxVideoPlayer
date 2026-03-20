@@ -16,7 +16,7 @@ $menu_items = [
     'usuarios'      => ['label' => 'Usuarios',       'icon' => 'bi-people-fill'],
     'empresas'      => ['label' => 'Empresas',       'icon' => 'bi-building-fill'],
     'sucursales'    => ['label' => 'Sucursales',     'icon' => 'bi-shop-window'],
-    'estadisticas'    => ['label' => 'Estadisticas',     'icon' => 'bi-shop-window'],
+    'estadisticas'    => ['label' => 'Estadisticas',     'icon' => 'bi-bar-chart-line-fill'],
 ];
 
 // Acciones internas (ocultas del menú, pero el router las acepta)
