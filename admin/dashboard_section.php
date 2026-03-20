@@ -197,7 +197,7 @@ if ($_SESSION['rol'] === 'admin') {
     </div>
     <div class="mt-3">
         <button type="submit" class="btn btn-primary">Filtrar</button>
-        <a href="?action=estadisticas&export=csv&desde=<?= urlencode($desde) ?>&hasta=<?= urlencode($hasta) ?>&empresa_id=<?= $empresa_id ?>&sucursal_id=<?= $sucursal_id ?>" 
+        <a href="?action=dashboard&export=csv&desde=<?= urlencode($desde) ?>&hasta=<?= urlencode($hasta) ?>&empresa_id=<?= $empresa_id ?>&sucursal_id=<?= $sucursal_id ?>" 
            class="btn btn-success ms-2">Exportar a CSV</a>
     </div>
 </form>
