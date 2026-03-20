@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
     No tienes sucursales asignadas para subir videos. Contacta a un administrador.
 </div>
 <?php else: ?>
-<form method="post" enctype="multipart/form-data" action="?action=videos">
+<form method="post" enctype="multipart/form-data" action="?action=video_upload">
     <div class="mb-4">
         <label class="form-label fw-bold">Archivo de video</label>
         <input type="file" name="video" accept="video/*" class="form-control" required>
