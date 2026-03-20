@@ -253,17 +253,6 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
 </div>
 
 <!-- Gráficos -->
-<div class="row g-4 mt-4">
-    <div class="col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Estados de dispositivos</h5>
-            </div>
-            <div class="card-body">
-                <canvas id="estadosChart" height="250"></canvas>
-            </div>
-        </div>
-    </div>
 <!-- Gráfico torta estados - siempre visible -->
 <div class="row g-4 mt-4">
     <div class="col-lg-6">
