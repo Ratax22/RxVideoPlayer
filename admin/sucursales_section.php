@@ -9,7 +9,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Listado de sucursales</h5>
-    <a href="?action=sucursal_nueva" class="btn btn-primary btn-sm">+ Nueva Sucursal</a>
+    <a href="?action=sucursal_edit" class="btn btn-primary btn-sm">+ Nueva Sucursal</a>
 </div>
 
 <div class="table-responsive">
