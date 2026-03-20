@@ -6,12 +6,13 @@
 
 $errors = [];
 
-// Sucursales que este usuario puede asignar (según rol y permisos)
-$sucursales = [];
+// Sucursales que este usuario puede asignar
+$sucursales = []; // Inicializamos vacío para evitar undefined
+
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 
+// Si es admin → todas las sucursales activas
 if ($_SESSION['rol'] === 'admin') {
-    // Admin ve todas las sucursales activas
     $sucursales = $pdo->query("
         SELECT s.id, s.nombre, e.nombre AS empresa 
         FROM sucursales s 
@@ -19,7 +20,9 @@ if ($_SESSION['rol'] === 'admin') {
         WHERE s.activo = 1 
         ORDER BY e.nombre, s.nombre
     ")->fetchAll(PDO::FETCH_ASSOC);
-} elseif (!empty($sucursales_ids)) {
+} 
+// Para otros roles → solo las asignadas
+elseif (!empty($sucursales_ids) && is_array($sucursales_ids)) {
     $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
     $stmt = $pdo->prepare("
         SELECT s.id, s.nombre, e.nombre AS empresa 
@@ -32,7 +35,7 @@ if ($_SESSION['rol'] === 'admin') {
     $sucursales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Si no hay sucursales disponibles → error
+// Mensaje si no hay sucursales disponibles
 if (empty($sucursales)) {
     $errors[] = "No tienes sucursales asignadas para subir videos. Contacta a un administrador.";
 }
@@ -65,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
             try {
                 $pdo->beginTransaction();
 
-                // Procesamiento FFmpeg
+                // Procesamiento FFmpeg (tu lógica original)
                 $ffmpeg = FFMPEG_PATH;
                 $cmd = escapeshellcmd("$ffmpeg -i " . escapeshellarg($upload_path));
 
@@ -99,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
 
                     $video_id = $pdo->lastInsertId();
 
-                    // Asignar sucursales (solo las permitidas)
+                    // Asignar solo sucursales válidas (seguridad extra)
                     $sucursales_validas = array_intersect($sucursales_post, $sucursales_ids);
                     if (!empty($sucursales_validas)) {
                         $stmt = $pdo->prepare("INSERT INTO video_sucursal (video_id, sucursal_id) VALUES (?, ?)");
@@ -118,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
             } catch (Exception $e) {
                 $pdo->rollBack();
                 $errors[] = "Error en base de datos o procesamiento: " . $e->getMessage();
+                // Limpiar archivos en caso de error
                 if (file_exists($upload_path)) unlink($upload_path);
                 if (file_exists($final_path)) unlink($final_path);
                 if (file_exists($thumb_path)) unlink($thumb_path);
