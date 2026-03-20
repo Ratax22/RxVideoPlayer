@@ -2,9 +2,9 @@
 session_start();
 require_once '../config.php';
 
-// Si ya está logueado → redirigir al dashboard
-if (isset($_SESSION['usuario_id'])) {
-    header("Location: index.php");
+// Si ya está logueado → redirigir al hub
+if (isset($_SESSION['usuario_id']) && isset($_SESSION['rol'])) {
+    header("Location: index.php?action=dashboard");
     exit;
 }
 
@@ -22,15 +22,11 @@ $login_url = GOOGLE_AUTH_URL . '?' . http_build_query([
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Panel Admin</title>
+    <title>Login con Google - Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .login-box { max-width: 400px; margin: 120px auto; }
-    </style>
 </head>
 <body class="bg-dark text-light">
-
-<div class="container login-box">
+<div class="container" style="max-width:400px; margin-top:120px;">
     <div class="card bg-dark border-light shadow">
         <div class="card-header text-center py-4">
             <h3>Panel de Administración</h3>
@@ -49,6 +45,9 @@ $login_url = GOOGLE_AUTH_URL . '?' . http_build_query([
             <p class="mt-4 text-muted small">
                 Solo usuarios autorizados pueden acceder.
             </p>
+            <div class="mt-3">
+                <a href="login.php" class="text-light">Usar login manual (email/contraseña)</a>
+            </div>
         </div>
     </div>
 </div>

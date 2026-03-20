@@ -2,9 +2,9 @@
 session_start();
 require_once '../config.php';
 
-// Si ya está logueado → ir al dashboard
+// Si ya está logueado → redirigir al hub
 if (isset($_SESSION['usuario_id']) && isset($_SESSION['rol'])) {
-    header("Location: index.php");
+    header("Location: index.php?action=dashboard");
     exit;
 }
 
@@ -29,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id'] = $user['id'];
             $_SESSION['email']      = $user['email'];
             $_SESSION['nombre']     = $user['nombre'];
-            $_SESSION['rol']        = $user['rol'];          // ← CORRECCIÓN clave
-            header("Location: index.php");
+            $_SESSION['rol']        = $user['rol'];
+            header("Location: index.php?action=dashboard");
             exit;
         } else {
             $errors[] = 'Credenciales incorrectas o cuenta inactiva';
@@ -43,11 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Panel Admin</title>
+    <title>Login - Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-dark text-light">
-<div class="container" style="max-width:400px; margin-top:100px;">
+<div class="container" style="max-width:400px; margin-top:120px;">
     <div class="card bg-dark border-light shadow">
         <div class="card-header text-center py-3">
             <h4>Login al Panel</h4>
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="text-center mt-4">
-                <a href="login_oauth.php" class="text-light small">Ingresar con Google</a>
+                <a href="login_oauth.php" class="text-light">Ingresar con Google</a>
             </div>
         </div>
     </div>
