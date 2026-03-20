@@ -77,6 +77,7 @@ if (!isset($menu_items[$action]) || !in_array($rol, $menu_items[$action]['roles'
     <main class="content col-12 col-lg-10 p-4">
         <?php
         // Router simple: incluir la sección según action
+        echo __DIR__ . '/' . $action . '_section.php';
         $section_file = __DIR__ . '/' . $action . '_section.php';
         if (file_exists($section_file)) {
             include $section_file;
