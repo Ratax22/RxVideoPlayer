@@ -3,13 +3,36 @@
 // estadisticas_section.php - Estadísticas detalladas + export CSV
 // ================================================
 
-// Debug en consola para ver qué llega
-echo "<script>console.log('Rol: " . addslashes($_SESSION['rol']) . "');</script>";
-echo "<script>console.log('Empresas IDs: ', " . json_encode($empresas_ids ?? []) . ");</script>";
-echo "<script>console.log('Sucursales IDs: ', " . json_encode($sucursales_ids ?? []) . ");</script>";
+// Exportar CSV
+if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+    ob_end_clean();
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="estadisticas_' . date('Y-m-d_H-i-s') . '.csv"');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
 
-// Cargar empresas visibles (solo las que el usuario puede ver)
+    $output = fopen('php://output', 'w');
+    echo "\xEF\xBB\xBF";
+
+    fputcsv($output, ['Métrica', 'Valor']);
+    fputcsv($output, ['Total reproducciones', $total_reproducciones ?? 0]);
+    fputcsv($output, ['Videos accesibles', $total_videos ?? 0]);
+    fputcsv($output, ['Videos nuevos (7 días)', $videos_nuevos ?? 0]);
+    fputcsv($output, []);
+    fputcsv($output, ['Top Videos', 'Reproducciones']);
+
+    foreach ($top_videos ?? [] as $v) {
+        fputcsv($output, [$v['title'], $v['reproducciones']]);
+    }
+
+    fclose($output);
+    exit;
+}
+
+// Cargar empresas y sucursales visibles
 $empresas = [];
+$empresas_ids = getEmpresasAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 if ($_SESSION['rol'] === 'admin') {
     $empresas = $pdo->query("SELECT id, nombre FROM empresas WHERE activo = 1 ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 } elseif (!empty($empresas_ids)) {
@@ -18,45 +41,31 @@ if ($_SESSION['rol'] === 'admin') {
     $stmt->execute($empresas_ids);
     $empresas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-echo "<script>console.log('Empresas cargadas para filtro: ', " . json_encode($empresas) . ");</script>";
 
-// Cargar sucursales visibles
 $sucursales = [];
+$sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 if ($_SESSION['rol'] === 'admin') {
-    $sucursales = $pdo->query("
-        SELECT s.id, s.nombre, e.nombre AS empresa 
-        FROM sucursales s 
-        INNER JOIN empresas e ON s.empresa_id = e.id 
-        WHERE s.activo = 1 
-        ORDER BY e.nombre, s.nombre
-    ")->fetchAll(PDO::FETCH_ASSOC);
+    $sucursales = $pdo->query("SELECT s.id, s.nombre, e.nombre AS empresa FROM sucursales s INNER JOIN empresas e ON s.empresa_id = e.id WHERE s.activo = 1 ORDER BY e.nombre, s.nombre")->fetchAll(PDO::FETCH_ASSOC);
 } elseif (!empty($sucursales_ids)) {
     $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
-    $stmt = $pdo->prepare("
-        SELECT s.id, s.nombre, e.nombre AS empresa 
-        FROM sucursales s 
-        INNER JOIN empresas e ON s.empresa_id = e.id 
-        WHERE s.id IN ($placeholders) AND s.activo = 1 
-        ORDER BY e.nombre, s.nombre
-    ");
+    $stmt = $pdo->prepare("SELECT s.id, s.nombre, e.nombre AS empresa FROM sucursales s INNER JOIN empresas e ON s.empresa_id = e.id WHERE s.id IN ($placeholders) AND s.activo = 1 ORDER BY e.nombre, s.nombre");
     $stmt->execute($sucursales_ids);
     $sucursales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-echo "<script>console.log('Sucursales cargadas para filtro: ', " . json_encode($sucursales) . ");</script>";
 
-// Filtros (GET)
+// Filtros
 $desde = $_GET['desde'] ?? date('Y-m-d', strtotime('-30 days'));
 $hasta = $_GET['hasta'] ?? date('Y-m-d');
 $empresa_id = isset($_GET['empresa_id']) ? (int)$_GET['empresa_id'] : 0;
 $sucursal_id = isset($_GET['sucursal_id']) ? (int)$_GET['sucursal_id'] : 0;
 
-// Validar filtros (solo permite los que el usuario ve)
+// Validar filtros
 if ($_SESSION['rol'] !== 'admin') {
     if ($empresa_id && !in_array($empresa_id, $empresas_ids)) $empresa_id = 0;
     if ($sucursal_id && !in_array($sucursal_id, $sucursales_ids)) $sucursal_id = 0;
 }
 
-// Construir WHERE base (filtrado por organizaciones del usuario)
+// WHERE base
 $where = "1=1";
 $params = [];
 if ($_SESSION['rol'] !== 'admin') {
@@ -65,11 +74,9 @@ if ($_SESSION['rol'] !== 'admin') {
         $where .= " AND vs.sucursal_id IN ($placeholders)";
         $params = array_merge($params, $sucursales_ids);
     } else {
-        $where .= " AND 1=0"; // Si no tiene sucursales, no muestra nada
+        $where .= " AND 1=0";
     }
 }
-
-// Filtros adicionales
 if ($desde) {
     $where .= " AND DATE(v.upload_date) >= ?";
     $params[] = $desde;
@@ -88,14 +95,7 @@ if ($sucursal_id) {
 }
 
 // Total reproducciones
-$stmt = $pdo->prepare("
-    SELECT COALESCE(SUM(v.reproducciones), 0) 
-    FROM videos v
-    LEFT JOIN video_sucursal vs ON v.id = vs.video_id
-    LEFT JOIN sucursales s ON vs.sucursal_id = s.id
-    LEFT JOIN empresas e ON s.empresa_id = e.id
-    WHERE $where
-");
+$stmt = $pdo->prepare("SELECT COALESCE(SUM(v.reproducciones), 0) FROM videos v LEFT JOIN video_sucursal vs ON v.id = vs.video_id LEFT JOIN sucursales s ON vs.sucursal_id = s.id LEFT JOIN empresas e ON s.empresa_id = e.id WHERE $where");
 $stmt->execute($params);
 $total_reproducciones = $stmt->fetchColumn();
 
@@ -116,41 +116,32 @@ if ($_SESSION['rol'] === 'admin') {
     $clientes_activos = $pdo->query("SELECT COUNT(*) FROM clients WHERE last_ping > DATE_SUB(NOW(), INTERVAL 5 MINUTE)")->fetchColumn();
 } elseif (!empty($sucursales_ids)) {
     $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
-    $stmt = $pdo->prepare("
-        SELECT COUNT(*) FROM clients c 
-        INNER JOIN client_sucursal cs ON c.id = cs.client_id 
-        WHERE cs.sucursal_id IN ($placeholders) AND c.last_ping > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
-    ");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM clients c INNER JOIN client_sucursal cs ON c.id = cs.client_id WHERE cs.sucursal_id IN ($placeholders) AND c.last_ping > DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
     $stmt->execute($sucursales_ids);
     $clientes_activos = $stmt->fetchColumn();
 }
 
-// Videos nuevos (7 días)
+// Videos nuevos
 $videos_nuevos = 0;
-$videos_nuevos_query = "SELECT COUNT(*) FROM videos v 
-                        LEFT JOIN video_sucursal vs ON v.id = vs.video_id 
-                        WHERE v.upload_date > DATE_SUB(NOW(), INTERVAL 7 DAY)";
-$params_videos_nuevos = [];
+$videos_nuevos_query = "SELECT COUNT(*) FROM videos v LEFT JOIN video_sucursal vs ON v.id = vs.video_id WHERE v.upload_date > DATE_SUB(NOW(), INTERVAL 7 DAY)";
+$params_vn = [];
 if ($_SESSION['rol'] !== 'admin') {
     if (!empty($sucursales_ids)) {
         $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
         $videos_nuevos_query .= " AND vs.sucursal_id IN ($placeholders)";
-        $params_videos_nuevos = $sucursales_ids;
+        $params_vn = $sucursales_ids;
     } else {
         $videos_nuevos_query .= " AND 1=0";
     }
 }
 $stmt = $pdo->prepare($videos_nuevos_query);
-$stmt->execute($params_videos_nuevos);
+$stmt->execute($params_vn);
 $videos_nuevos = $stmt->fetchColumn();
 
 // Top videos
 $top_videos = [];
-$top_query = "SELECT v.title, COALESCE(SUM(v.reproducciones), 0) as reproducciones 
-              FROM videos v ";
-if ($_SESSION['rol'] !== 'admin') {
-    $top_query .= "INNER JOIN video_sucursal vs ON v.id = vs.video_id ";
-}
+$top_query = "SELECT v.title, COALESCE(SUM(v.reproducciones), 0) as reproducciones FROM videos v ";
+if ($_SESSION['rol'] !== 'admin') $top_query .= "INNER JOIN video_sucursal vs ON v.id = vs.video_id ";
 $top_query .= "WHERE 1=1 ";
 if ($_SESSION['rol'] !== 'admin' && !empty($sucursales_ids)) {
     $placeholders = implode(',', array_fill(0, count($sucursales_ids), '?'));
@@ -165,7 +156,6 @@ $top_videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Export CSV
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     ob_end_clean();
-
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="estadisticas_' . date('Y-m-d_H-i-s') . '.csv"');
     header('Cache-Control: no-cache, no-store, must-revalidate');
@@ -173,7 +163,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Expires: 0');
 
     $output = fopen('php://output', 'w');
-    echo "\xEF\xBB\xBF"; // BOM para Excel
+    echo "\xEF\xBB\xBF";
 
     fputcsv($output, ['Métrica', 'Valor']);
     fputcsv($output, ['Total reproducciones', $total_reproducciones ?? 0]);
@@ -181,7 +171,6 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     fputcsv($output, ['Videos nuevos (7 días)', $videos_nuevos ?? 0]);
     fputcsv($output, []);
     fputcsv($output, ['Top Videos', 'Reproducciones']);
-
     foreach ($top_videos as $v) {
         fputcsv($output, [$v['title'], $v['reproducciones']]);
     }
@@ -235,7 +224,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     </div>
 </form>
 
-<!-- Métricas principales -->
+<!-- Métricas -->
 <div class="row g-4">
     <div class="col-md-4">
         <div class="card border-success shadow-sm h-100">
