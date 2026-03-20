@@ -10,7 +10,7 @@
 <?php if ($_SESSION['rol'] === 'admin' || $_SESSION['rol'] === 'dueño'): ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0">Listado de usuarios</h5>
-    <a href="?action=usuario_nuevo" class="btn btn-primary btn-sm">+ Nuevo Usuario</a>
+    <a href="?action=usuario_edit" class="btn btn-primary btn-sm">+ Nuevo Usuario</a>
 </div>
 <?php endif; ?>
 
