@@ -48,7 +48,7 @@ foreach ($videos as $v) {
 <?php endif; ?>
 
 <?php if ($_SESSION['rol'] !== 'empleado'): ?>
-<a href="?action=video_nuevo" class="btn btn-primary mb-3">+ Subir nuevo video</a>
+<a href="?action=video_upload" class="btn btn-primary mb-3">+ Subir nuevo video</a>
 <?php endif; ?>
 
 <div class="table-responsive">
