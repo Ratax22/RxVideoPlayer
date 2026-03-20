@@ -10,7 +10,7 @@ $errors = [];
 $sucursales = []; // Inicializamos vacío para evitar undefined
 
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
-
+echo "Pepe son" .$sucursales_ids;
 // Si es admin → todas las sucursales activas
 if ($_SESSION['rol'] === 'admin') {
     $sucursales = $pdo->query("
@@ -20,7 +20,6 @@ if ($_SESSION['rol'] === 'admin') {
         WHERE s.activo = 1 
         ORDER BY e.nombre, s.nombre
     ")->fetchAll(PDO::FETCH_ASSOC);
-    echo $sucursales_ids;
 } 
 // Para otros roles → solo las asignadas
 elseif (!empty($sucursales_ids) && is_array($sucursales_ids)) {
