@@ -69,6 +69,8 @@ function playNextVideo() {
     titleElement.style.opacity = '1';
     setTimeout(() => titleElement.style.opacity = '0', 5000);
     videoIndex = (videoIndex + 1) % currentPlaylist.length;
+    // En playNextVideo()
+    fetch(`/api/log_reproduccion.php?video_id=${video.id}&client_key=${CLIENT_KEY}`);
 }
 
 async function fetchPlaylist(force = false) {
