@@ -20,6 +20,7 @@ if ($_SESSION['rol'] === 'admin') {
         WHERE s.activo = 1 
         ORDER BY e.nombre, s.nombre
     ")->fetchAll(PDO::FETCH_ASSOC);
+    echo $sucursales_ids;
 } 
 // Para otros roles → solo las asignadas
 elseif (!empty($sucursales_ids) && is_array($sucursales_ids)) {
