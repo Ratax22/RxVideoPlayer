@@ -309,7 +309,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
 </div>
 
 <!-- Toast videos nuevos -->
-<?php if ($videos_nuevos > 0): ?>
+<!--<?php if ($videos_nuevos > 0): ?>
 <div class="alert alert-info alert-dismissible fade show mt-4" role="alert">
     <i class="bi bi-stars-fill me-2 text-warning"></i>
     <strong>¡<?= $videos_nuevos ?> video<?= $videos_nuevos > 1 ? 's' : '' ?> nuevo<?= $videos_nuevos > 1 ? 's' : '' ?> disponible<?= $videos_nuevos > 1 ? 's' : '' ?>!</strong>
@@ -318,7 +318,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     <a href="?action=videos" class="alert-link fw-bold ms-2">Ver videos ahora →</a>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-<?php endif; ?>
+<?php endif; ?>-->
 
 <!-- Alertas offline -->
 <?php if (!empty($alertas_offline)): ?>
