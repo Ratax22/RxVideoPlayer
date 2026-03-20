@@ -1,3 +1,4 @@
+<?php $_SESSION['ultima_visita_videos'] = time(); ?>
 <h1 class="mb-4">Videos Disponibles</h1>
 
 <?php if (isset($_SESSION['flash'])): ?>
