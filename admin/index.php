@@ -21,11 +21,11 @@ $menu_items = [
 
 // Acciones internas (ocultas del menú, pero el router las acepta)
 $internal_actions = [
-    'cliente_nuevo', 'cliente_edit', 'cliente_delete',
-    'video_nuevo', 'video_edit', 'video_delete',
-    'sucursal_nueva', 'sucursal_edit', 'sucursal_delete',
-    'empresa_nueva', 'empresa_edit', 'empresa_delete',
-    'usuario_nuevo', 'usuario_edit', 'usuario_delete',
+    'cliente_edit', 'cliente_delete',
+    'video_upload', 'video_edit', 'video_delete',
+    'sucursal_edit', 'sucursal_delete',
+    'empresa_edit', 'empresa_delete',
+    'usuario_edit', 'usuario_delete',
     // Agregá acá cualquier otra acción oculta que tengas
 ];
 
