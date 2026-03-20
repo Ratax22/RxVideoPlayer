@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video']) && $_FILES[
                     $pdo->commit();
 
                     $_SESSION['flash'] = ['type' => 'success', 'message' => 'Video subido y procesado correctamente.'];
-                    header("Location: ?action=videos");
+                    //header("Location: ?action=videos");
                     exit;
                 } catch (PDOException $e) {
                     $pdo->rollBack();
