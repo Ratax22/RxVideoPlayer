@@ -2,6 +2,7 @@
 // ================================================
 // video_upload_section.php
 // Subir nuevo video con asignación de sucursales
+// Fixeado
 // ================================================
 
 $errors = [];
@@ -10,7 +11,7 @@ $errors = [];
 $sucursales = []; // Inicializamos vacío para evitar undefined
 
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
-echo "Pepe son" .$sucursales_ids;
+
 // Si es admin → todas las sucursales activas
 if ($_SESSION['rol'] === 'admin') {
     $sucursales = $pdo->query("
