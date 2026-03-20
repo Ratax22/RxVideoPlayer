@@ -17,7 +17,7 @@ $menu_items = [
     'clientes'   => ['label' => 'Dispositivos',  'icon' => 'bi-tv',             'roles' => ['admin','dueño','supervisor','empleado']],
     'cliente_edit'   => ['label' => 'Dispositivos Editar',  'icon' => 'bi-tv',             'roles' => ['admin','dueño','supervisor','empleado']],
     'usuarios'   => ['label' => 'Usuarios',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
-    'usuarios_edit'   => ['label' => 'Usuarios Editar',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
+    'usuario_edit'   => ['label' => 'Usuarios Editar',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
     'empresas'   => ['label' => 'Empresas',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
     'empresas_editar'   => ['label' => 'Empresas Editar',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
     'sucursales' => ['label' => 'Sucursales',    'icon' => 'bi-shop',           'roles' => ['admin','dueño']],

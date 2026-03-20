@@ -57,7 +57,7 @@ if (isset($_SESSION['flash'])) {
 <?php endif; ?>
 
 <?php if ($_SESSION['rol'] !== 'empleado'): ?>
-    <a href="?action=cliente_nuevo" class="btn btn-primary mb-3">+ Nuevo dispositivo</a>
+    <a href="?action=cliente_edit" class="btn btn-primary mb-3">+ Nuevo dispositivo</a>
 <?php endif; ?>
 
 <div class="table-responsive">
