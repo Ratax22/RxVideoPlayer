@@ -1,12 +1,12 @@
 <?php
 // ================================================
-// estadisticas_section.php - Estadísticas detalladas + export CSV puro
+// estadisticas_section.php - Estadísticas detalladas + export CSV
 // ================================================
 
 // Bloque de export CSV - se ejecuta primero y corta todo
 if (isset($_GET['export']) && $_GET['export'] === 'csv') {
-    ob_start(); // Buffer para limpiar salida accidental
-    ob_end_clean(); // Limpiar cualquier cosa que se haya impreso antes
+    // Limpiar cualquier salida previa
+    while (ob_get_level()) ob_end_clean();
 
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="estadisticas_' . date('Y-m-d_H-i-s') . '.csv"');
@@ -16,9 +16,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
 
     $output = fopen('php://output', 'w');
 
-    // BOM para Excel (caracteres especiales)
+    // BOM para que Excel lea bien los acentos
     echo "\xEF\xBB\xBF";
 
+    // Cabeceras CSV
     fputcsv($output, ['Métrica', 'Valor']);
     fputcsv($output, ['Total reproducciones', $total_reproducciones ?? 0]);
     fputcsv($output, ['Videos accesibles', $total_videos ?? 0]);
@@ -31,10 +32,10 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     }
 
     fclose($output);
-    exit; // ¡Corta inmediatamente! No llega al HTML
+    exit; // ¡Corta todo inmediatamente!
 }
 
-// Si no es export → render normal
+// Si no es export → render normal del HTML
 ?>
 
 <h1 class="mb-4">Estadísticas</h1>
@@ -109,7 +110,7 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     </div>
 </div>
 
-<!-- Gráficos y listados -->
+<!-- Gráficos -->
 <div class="row g-4 mt-4">
     <div class="col-lg-6">
         <div class="card shadow-sm">
