@@ -11,6 +11,9 @@ require_once 'proteccion.php';
 $menu_items = [
     'dashboard'  => ['label' => 'Dashboard',     'icon' => 'bi-house-door',    'roles' => ['admin','dueño','supervisor','empleado']],
     'videos'     => ['label' => 'Videos',        'icon' => 'bi-film',           'roles' => ['admin','dueño','supervisor','empleado']],
+    'video_edit'     => ['label' => 'Videos Editar',        'icon' => 'bi-film',           'roles' => ['admin','dueño','supervisor','empleado']],
+    'video_upload'     => ['label' => 'Videos Subir',        'icon' => 'bi-film',           'roles' => ['admin','dueño','supervisor','empleado']],
+    'video_delete'     => ['label' => 'Videos Eliminar',        'icon' => 'bi-film',           'roles' => ['admin','dueño','supervisor','empleado']],
     'clientes'   => ['label' => 'Dispositivos',  'icon' => 'bi-tv',             'roles' => ['admin','dueño','supervisor','empleado']],
     'usuarios'   => ['label' => 'Usuarios',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
     'empresas'   => ['label' => 'Empresas',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
