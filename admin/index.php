@@ -81,6 +81,7 @@ if (!isset($menu_items[$action]) || !in_array($rol, $menu_items[$action]['roles'
         if (file_exists($section_file)) {
             include $section_file;
         } else {
+            echo $section_file;
             echo '<div class="alert alert-warning">Sección no encontrada: ' . htmlspecialchars($action) . '</div>';
         }
         ?>
