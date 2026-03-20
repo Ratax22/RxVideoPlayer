@@ -3,13 +3,9 @@
 // dashboard_section.php - Resumen personalizado
 // ================================================
 
-// Empresas y sucursales accesibles para el usuario actual
+// Empresas y sucursales accesibles
 $empresas_ids = getEmpresasAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
 $sucursales_ids = getSucursalesAcceso($pdo, $_SESSION['usuario_id'], $_SESSION['rol']);
-
-// ================================================
-// Métricas filtradas por permisos
-// ================================================
 
 // Total clientes accesibles
 if ($_SESSION['rol'] === 'admin') {
@@ -39,70 +35,99 @@ if ($_SESSION['rol'] === 'admin') {
     }
 }
 
-// Videos más reproducidos (top 5) - asumiendo que agregaste campo reproducciones en videos
+// Clientes activos / offline
+$clientes_activos = $pdo->query("
+    SELECT COUNT(*) FROM clients 
+    WHERE last_ping > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+")->fetchColumn();
+
+$clientes_offline = $pdo->query("
+    SELECT COUNT(*) FROM clients 
+    WHERE last_ping < DATE_SUB(NOW(), INTERVAL 1 HOUR) OR last_ping IS NULL
+")->fetchColumn();
+
+// Top 5 videos más reproducidos (filtrado por rol)
 $top_videos = [];
-$stmt = $pdo->prepare("
-    SELECT v.id, v.title, v.reproducciones 
-    FROM videos v
-    " . ($_SESSION['rol'] !== 'admin' ? "INNER JOIN video_sucursal vs ON v.id = vs.video_id" : "") . "
-    WHERE " . ($_SESSION['rol'] !== 'admin' ? "vs.sucursal_id IN (" . implode(',', array_fill(0, count($sucursales_ids), '?')) . ")" : "1=1") . "
-    ORDER BY v.reproducciones DESC 
-    LIMIT 5
-");
-if ($_SESSION['rol'] !== 'admin') $stmt->execute($sucursales_ids);
-else $stmt->execute();
+$placeholders = '';
+if ($_SESSION['rol'] !== 'admin' && !empty($sucursales_ids)) {
+    $placeholders = 'WHERE vs.sucursal_id IN (' . implode(',', array_fill(0, count($sucursales_ids), '?')) . ')';
+    $stmt = $pdo->prepare("
+        SELECT v.id, v.title, v.reproducciones 
+        FROM videos v
+        INNER JOIN video_sucursal vs ON v.id = vs.video_id
+        $placeholders
+        GROUP BY v.id
+        ORDER BY v.reproducciones DESC 
+        LIMIT 5
+    ");
+    $stmt->execute($sucursales_ids);
+} else {
+    $stmt = $pdo->prepare("
+        SELECT id, title, reproducciones 
+        FROM videos 
+        ORDER BY reproducciones DESC 
+        LIMIT 5
+    ");
+    $stmt->execute();
+}
 $top_videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Clientes con playlist desactualizada o sin videos
-$clientes_sin_playlist = $pdo->query("SELECT COUNT(*) FROM clients WHERE playlist_version = 0")->fetchColumn();
-
-// Alertas: clientes offline > 1 hora
+// Alertas offline (filtradas)
 $alertas_offline = [];
-$stmt = $pdo->prepare("
-    SELECT c.name, c.last_ping 
-    FROM clients c
-    " . ($_SESSION['rol'] !== 'admin' ? "INNER JOIN client_sucursal cs ON c.id = cs.client_id" : "") . "
-    WHERE c.last_ping < DATE_SUB(NOW(), INTERVAL 1 HOUR) 
-    " . ($_SESSION['rol'] !== 'admin' ? "AND cs.sucursal_id IN (" . implode(',', array_fill(0, count($sucursales_ids), '?')) . ")" : "") . "
-    ORDER BY c.last_ping DESC 
-    LIMIT 5
-");
-if ($_SESSION['rol'] !== 'admin') $stmt->execute($sucursales_ids);
-else $stmt->execute();
+$placeholders = '';
+if ($_SESSION['rol'] !== 'admin' && !empty($sucursales_ids)) {
+    $placeholders = 'AND cs.sucursal_id IN (' . implode(',', array_fill(0, count($sucursales_ids), '?')) . ')';
+    $stmt = $pdo->prepare("
+        SELECT c.name, c.last_ping 
+        FROM clients c
+        INNER JOIN client_sucursal cs ON c.id = cs.client_id
+        WHERE c.last_ping < DATE_SUB(NOW(), INTERVAL 1 HOUR) 
+        $placeholders
+        ORDER BY c.last_ping DESC 
+        LIMIT 5
+    ");
+    $stmt->execute($sucursales_ids);
+} else {
+    $stmt = $pdo->prepare("
+        SELECT name, last_ping 
+        FROM clients 
+        WHERE last_ping < DATE_SUB(NOW(), INTERVAL 1 HOUR) 
+        ORDER BY last_ping DESC 
+        LIMIT 5
+    ");
+    $stmt->execute();
+}
 $alertas_offline = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<h1 class="mb-4">Dashboard - Bienvenido, <?= htmlspecialchars($_SESSION['nombre']) ?></h1>
+<h1 class="mb-4">Dashboard</h1>
 
-<div class="row g-4">
-
-    <!-- Card: Dispositivos -->
+<div class="row g-4 mb-4">
     <div class="col-md-6 col-lg-3">
         <div class="card border-primary h-100 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title text-primary">Dispositivos</h5>
                 <h2 class="card-text"><?= number_format($total_clientes) ?></h2>
                 <p class="text-muted small">
-                    Sin playlist: <strong><?= $clientes_sin_playlist ?></strong>
+                    Activos: <strong><?= $clientes_activos ?></strong><br>
+                    Offline: <strong><?= $clientes_offline ?></strong>
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- Card: Videos -->
     <div class="col-md-6 col-lg-3">
         <div class="card border-success h-100 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title text-success">Videos</h5>
                 <h2 class="card-text"><?= number_format($total_videos) ?></h2>
                 <p class="text-muted small">
-                    Total accesibles para ti
+                    Accesibles para ti
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- Card: Organizaciones -->
     <div class="col-md-6 col-lg-3">
         <div class="card border-info h-100 shadow-sm">
             <div class="card-body">
@@ -115,31 +140,63 @@ $alertas_offline = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Card: Alertas -->
     <div class="col-md-6 col-lg-3">
         <div class="card border-danger h-100 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title text-danger">Alertas</h5>
                 <h2 class="card-text"><?= count($alertas_offline) ?></h2>
                 <p class="text-muted small">
-                    Dispositivos offline >1h
+                    Offline >1h
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Gráfico: Top 5 videos más reproducidos -->
-<?php if (!empty($top_videos)): ?>
-<div class="card mt-4 shadow-sm">
-    <div class="card-header bg-success text-white">
-        <h5 class="mb-0">Top 5 videos más reproducidos</h5>
+<div class="row g-4">
+    <!-- Torta: Estados de dispositivos -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Estados de dispositivos</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="estadosChart" height="250"></canvas>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <canvas id="topVideosChart" height="200"></canvas>
+
+    <!-- Listado: Top videos más reproducidos -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Top videos más reproducidos</h5>
+            </div>
+            <div class="card-body">
+                <?php if (!empty($top_videos)): ?>
+                <ul class="list-group list-group-flush">
+                    <?php foreach ($top_videos as $index => $v): 
+                        $bg = $index === 0 ? 'bg-success-subtle' : ($index === 1 ? 'bg-info-subtle' : '');
+                    ?>
+                        <li class="list-group-item <?= $bg ?>">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong><?= $index + 1 ?>. <?= htmlspecialchars($v['title']) ?></strong>
+                                </div>
+                                <span class="badge bg-success rounded-pill">
+                                    <?= number_format($v['reproducciones']) ?> reproducciones
+                                </span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php else: ?>
+                <p class="text-muted text-center py-3">Aún no hay reproducciones registradas.</p>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
-<?php endif; ?>
 
 <!-- Alertas offline -->
 <?php if (!empty($alertas_offline)): ?>
@@ -156,32 +213,26 @@ $alertas_offline = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 <?php endif; ?>
 
-<!-- Chart.js para top videos -->
-<?php if (!empty($top_videos)): ?>
+<!-- Gráfico torta estados -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('topVideosChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
+    const ctxEstados = document.getElementById('estadosChart').getContext('2d');
+    new Chart(ctxEstados, {
+        type: 'doughnut',
         data: {
-            labels: [<?php foreach ($top_videos as $v) echo "'" . addslashes(substr($v['title'], 0, 20)) . "', "; ?>],
+            labels: ['Activos', 'Inactivos', 'Offline'],
             datasets: [{
-                label: 'Reproducciones',
-                data: [<?php foreach ($top_videos as $v) echo $v['reproducciones'] . ', '; ?>],
-                backgroundColor: '#28a745',
-                borderColor: '#1e7e34',
+                data: [<?= $clientes_activos ?>, <?= $total_clientes - $clientes_activos - $clientes_offline ?>, <?= $clientes_offline ?>],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            },
             plugins: {
-                legend: { display: false }
+                legend: { position: 'top' },
+                title: { display: true, text: 'Estados actuales' }
             }
         }
     });
 </script>
-<?php endif; ?>
