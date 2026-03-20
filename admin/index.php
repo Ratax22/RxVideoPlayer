@@ -15,9 +15,13 @@ $menu_items = [
     'video_upload'     => ['label' => 'Videos Subir',        'icon' => 'bi-film',           'roles' => ['admin','dueño','supervisor','empleado']],
     'video_delete'     => ['label' => 'Videos Eliminar',        'icon' => 'bi-film',           'roles' => ['admin','dueño','supervisor','empleado']],
     'clientes'   => ['label' => 'Dispositivos',  'icon' => 'bi-tv',             'roles' => ['admin','dueño','supervisor','empleado']],
+    'cliente_edit'   => ['label' => 'Dispositivos Editar',  'icon' => 'bi-tv',             'roles' => ['admin','dueño','supervisor','empleado']],
     'usuarios'   => ['label' => 'Usuarios',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
+    'usuarios_edit'   => ['label' => 'Usuarios Editar',      'icon' => 'bi-people',         'roles' => ['admin','dueño','supervisor']],
     'empresas'   => ['label' => 'Empresas',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
+    'empresas_editar'   => ['label' => 'Empresas Editar',      'icon' => 'bi-building',       'roles' => ['admin','dueño']],
     'sucursales' => ['label' => 'Sucursales',    'icon' => 'bi-shop',           'roles' => ['admin','dueño']],
+    'sucursales_edit' => ['label' => 'Sucursales Editar',    'icon' => 'bi-shop',           'roles' => ['admin','dueño']],
 ];
 
 $action = $_GET['action'] ?? 'dashboard';
